@@ -1,0 +1,23 @@
+# Icg-ecole
+
+## 📚 Description
+Plateforme numérique pour la gestion d’un établissement scolaire public.
+
+## 🚀 Fonctionnalités
+- Gestion des élèves
+- Gestion des enseignants
+- Suivi des notes
+- Communication école-parents
+
+## 🛠️ Technologies utilisées
+- HTML / CSS / JavaScript
+- (Ajoute ici si tu utilises autre chose : PHP, Python, etc.)
+
+## 📦 Installation
+1. Cloner le projet :
+git clone https://github.com/ton-username/icg-ecole.git
+
+2. Ouvrir le projet dans un navigateur ou un éditeur
+
+## 👨‍💻 Auteur
+Danbaloko
