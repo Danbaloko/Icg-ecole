@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Salle de cours — ÉcolePro</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--navy:#0B1F3A;--blue:#1558D6;--green:#16A34A;--red:#DC2626;--gray:#F0F4F8;--muted:#6B7A8D;}
+body{font-family:'Segoe UI',sans-serif;background:var(--navy);color:#fff;height:100vh;display:flex;flex-direction:column;}
+
+/* Barre supérieure */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(0,0,0,.3);flex-shrink:0;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.logo{font-size:14px;font-weight:700;color:#fff;opacity:.8;}
+.cours-titre{font-size:15px;font-weight:700;}
+.cours-meta{font-size:12px;color:rgba(255,255,255,.5);margin-top:1px;}
+.badge{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;}
+.badge-live{background:#DC2626;color:#fff;animation:pulse 2s infinite;}
+.badge-planifie{background:rgba(255,255,255,.15);color:#fff;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.timer{font-size:13px;font-weight:600;color:rgba(255,255,255,.7);font-variant-numeric:tabular-nums;}
+
+/* Zone principale */
+.main{flex:1;display:flex;overflow:hidden;}
+.video-area{flex:1;position:relative;}
+#jitsi-container{width:100%;height:100%;}
+
+/* Panneau latéral */
+.sidebar{width:300px;background:rgba(0,0,0,.4);display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.08);}
+.sidebar-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.08);}
+.sidebar-tab{flex:1;padding:12px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.5);border:none;background:none;transition:all .15s;}
+.sidebar-tab.active{color:#fff;border-bottom:2px solid var(--blue);}
+.sidebar-body{flex:1;overflow-y:auto;padding:14px;}
+
+/* Participants */
+.participant{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.participant:last-child{border:none;}
+.p-avatar{width:32px;height:32px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.p-name{font-size:13px;font-weight:500;flex:1;}
+.p-status{font-size:10px;color:rgba(255,255,255,.4);}
+.p-icon{width:14px;height:14px;opacity:.6;}
+
+/* Chat */
+.chat-msg{margin-bottom:12px;}
+.chat-sender{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:2px;}
+.chat-text{font-size:13px;line-height:1.5;background:rgba(255,255,255,.07);padding:8px 10px;border-radius:8px;}
+.chat-input-wrap{padding:10px;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:8px;}
+.chat-input{flex:1;background:rgba(255,255,255,.1);border:none;border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;outline:none;}
+.chat-input::placeholder{color:rgba(255,255,255,.3);}
+.chat-send{background:var(--blue);border:none;border-radius:8px;padding:8px 14px;color:#fff;cursor:pointer;font-size:13px;}
+
+/* Infos cours */
+.info-section{margin-bottom:16px;}
+.info-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.info-val{font-size:13px;color:#fff;line-height:1.6;}
+.td-card{background:rgba(255,255,255,.07);border-radius:8px;padding:10px;margin-top:6px;}
+.td-titre{font-size:13px;font-weight:600;}
+.td-deadline{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;}
+.btn-add-td{width:100%;margin-top:10px;padding:10px;border-radius:8px;border:1px dashed rgba(255,255,255,.2);background:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:12px;transition:all .15s;}
+.btn-add-td:hover{background:rgba(255,255,255,.05);color:#fff;border-color:rgba(255,255,255,.4);}
+
+/* Bottom bar enseignant */
+.bottombar{padding:12px 20px;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:12px;flex-shrink:0;}
+.ctrl-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 16px;border-radius:12px;border:none;cursor:pointer;font-size:10px;font-weight:600;transition:all .15s;}
+.ctrl-btn svg{width:20px;height:20px;}
+.ctrl-btn.normal{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);}
+.ctrl-btn.danger{background:var(--red);color:#fff;}
+.ctrl-btn.success{background:var(--green);color:#fff;}
+
+/* Modal TD */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000;display:none;}
+.modal-overlay.open{display:flex;}
+.modal{background:#1E2D42;border-radius:16px;padding:24px;width:380px;max-width:90vw;}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px;}
+.modal input,.modal textarea{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;outline:none;margin-bottom:10px;font-family:inherit;}
+.modal textarea{min-height:80px;resize:vertical;}
+.modal-actions{display:flex;gap:8px;margin-top:6px;}
+.modal-btn{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;}
+.modal-btn.primary{background:var(--blue);color:#fff;}
+.modal-btn.secondary{background:rgba(255,255,255,.1);color:#fff;}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">ÉcolePro</div>
+    <div>
+      <div class="cours-titre" id="cours-titre">Mathématiques — 6ème A</div>
+      <div class="cours-meta" id="cours-meta">M. Kourouma · 28 élèves</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="badge badge-live" id="statut-badge">EN DIRECT</span>
+    <span class="timer" id="timer">00:00:00</span>
+  </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="main">
+
+  <!-- Zone vidéo Jitsi -->
+  <div class="video-area">
+    <div id="jitsi-container"></div>
+    <!-- Message avant connexion -->
+    <div id="pre-join" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
+      <div style="text-align:center;">
+        <div style="font-size:48px;margin-bottom:12px;">🎓</div>
+        <div style="font-size:20px;font-weight:700;margin-bottom:8px;" id="pre-titre">Mathématiques</div>
+        <div style="font-size:14px;color:rgba(255,255,255,.5);">Cliquez sur Rejoindre pour entrer dans la salle</div>
+      </div>
+      <button onclick="rejoindreSalle()" style="background:var(--blue);border:none;color:#fff;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
+        Rejoindre le cours
+      </button>
+    </div>
+  </div>
+
+  <!-- Panneau latéral -->
+  <div class="sidebar">
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab active" onclick="setTab('participants',this)">Participants</button>
+      <button class="sidebar-tab" onclick="setTab('chat',this)">Chat</button>
+      <button class="sidebar-tab" onclick="setTab('infos',this)">Infos</button>
+    </div>
+
+    <!-- Onglet Participants -->
+    <div class="sidebar-body" id="tab-participants">
+      <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;" id="nb-presents">3 / 28 participants</div>
+      <div class="participant">
+        <div class="p-avatar" style="background:#1558D6;">MK</div>
+        <div><div class="p-name">M. Kourouma <span style="font-size:10px;color:#60A5FA;">(Enseignant)</span></div><div class="p-status">Micro actif</div></div>
+      </div>
+      <div class="participant">
+        <div class="p-avatar" style="background:#0A9E88;">KA</div>
+        <div><div class="p-name">Kofi Asante</div><div class="p-status">Connecté</div></div>
+      </div>
+      <div class="participant">
+        <div class="p-avatar" style="background:#7C3AED;">LM</div>
+        <div><div class="p-name">Léa Martin</div><div class="p-status">Micro coupé</div></div>
+      </div>
+    </div>
+
+    <!-- Onglet Chat -->
+    <div class="sidebar-body" id="tab-chat" style="display:none;padding-bottom:0;display:flex;flex-direction:column;">
+      <div style="flex:1;overflow-y:auto;" id="chat-messages">
+        <div class="chat-msg">
+          <div class="chat-sender">M. Kourouma</div>
+          <div class="chat-text">Bonjour à tous ! Ouvrez vos cahiers à la page 47.</div>
+        </div>
+        <div class="chat-msg">
+          <div class="chat-sender">Kofi Asante</div>
+          <div class="chat-text">Bonjour monsieur !</div>
+        </div>
+      </div>
+      <div class="chat-input-wrap">
+        <input class="chat-input" placeholder="Écrire un message…" id="chat-input" onkeydown="if(event.key==='Enter')envoyerChat()"/>
+        <button class="chat-send" onclick="envoyerChat()">Envoyer</button>
+      </div>
+    </div>
+
+    <!-- Onglet Infos -->
+    <div class="sidebar-body" id="tab-infos" style="display:none;">
+      <div class="info-section">
+        <div class="info-label">Cours</div>
+        <div class="info-val">Mathématiques — Chapitre 6 : Fractions et proportions</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Classe</div>
+        <div class="info-val">6ème A · 28 élèves</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Enseignant</div>
+        <div class="info-val">M. Kourouma · Mathématiques</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">TD assignés</div>
+        <div class="td-card">
+          <div class="td-titre">Exercices page 52 — n°1 à 5</div>
+          <div class="td-deadline">À rendre avant : Vendredi 28 Mars</div>
+        </div>
+        <button class="btn-add-td" id="btn-td" onclick="ouvrirModalTD()">+ Ajouter un TD</button>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Enregistrement</div>
+        <div class="info-val" style="color:rgba(255,255,255,.5);">Disponible après le cours</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Barre de contrôle (enseignant) -->
+<div class="bottombar" id="teacher-controls">
+  <button class="ctrl-btn normal" onclick="toggleMic(this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    Micro
+  </button>
+  <button class="ctrl-btn normal" onclick="toggleCam(this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+    Caméra
+  </button>
+  <button class="ctrl-btn normal" onclick="toggleScreen(this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    Écran
+  </button>
+  <button class="ctrl-btn success" onclick="ouvrirModalTD()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    Donner TD
+  </button>
+  <button class="ctrl-btn danger" onclick="terminerCours()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+    Terminer
+  </button>
+</div>
+
+<!-- Modal ajout TD -->
+<div class="modal-overlay" id="modal-td">
+  <div class="modal">
+    <h3>Assigner un TD</h3>
+    <input type="text" id="td-titre" placeholder="Titre du TD (ex: Exercices p.52)"/>
+    <textarea id="td-desc" placeholder="Description ou consignes…"></textarea>
+    <input type="datetime-local" id="td-deadline"/>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="fermerModalTD()">Annuler</button>
+      <button class="modal-btn primary" onclick="sauvegarderTD()">Assigner & notifier parents</button>
+    </div>
+  </div>
+</div>
+
+<!-- Jitsi Meet SDK -->
+<script src="https://8x8.vc/vpaas-magic-cookie-xxxx/external_api.js"></script>
+<script>
+// ── Config (injecté par le serveur) ────────────────────
+const COURS_CONFIG = {
+  roomName:  'ecolepro-abc12345',
+  titre:     'Mathématiques — 6ème A',
+  enseignant:'M. Kourouma',
+  domain:    'meet.jit.si',   // ou votre domaine Jitsi auto-hébergé
+  jwtToken:  null,             // injecté par l'API /cours/:id/rejoindre
+  isModerator: true,
+};
+
+let jitsiApi = null;
+let timerInterval = null;
+let startTime = null;
+let activeTab = 'participants';
+
+// ── Rejoindre la salle Jitsi ──────────────────────────
+function rejoindreSalle() {
+  document.getElementById('pre-join').style.display = 'none';
+
+  const options = {
+    roomName:  COURS_CONFIG.roomName,
+    width:     '100%',
+    height:    '100%',
+    parentNode: document.getElementById('jitsi-container'),
+    jwt:        COURS_CONFIG.jwtToken,
+    lang:       'fr',
+    configOverwrite: {
+      startWithAudioMuted:  false,
+      startWithVideoMuted:  false,
+      disableDeepLinking:   true,
+      enableWelcomePage:    false,
+      prejoinPageEnabled:   false,
+      toolbarButtons: [],    // masquer la toolbar Jitsi (on utilise la nôtre)
+    },
+    interfaceConfigOverwrite: {
+      SHOW_JITSI_WATERMARK: false,
+      SHOW_BRAND_WATERMARK:  false,
+      TOOLBAR_ALWAYS_VISIBLE: false,
+    },
+  };
+
+  jitsiApi = new JitsiMeetExternalAPI(COURS_CONFIG.domain, options);
+
+  // Écouter les événements Jitsi
+  jitsiApi.addEventListener('videoConferenceJoined', () => {
+    startTimer();
+  });
+  jitsiApi.addEventListener('participantJoined', updateParticipants);
+  jitsiApi.addEventListener('participantLeft',   updateParticipants);
+  jitsiApi.addEventListener('videoConferenceLeft', () => {
+    clearInterval(timerInterval);
+  });
+}
+
+// ── Contrôles ─────────────────────────────────────────
+function toggleMic(btn) {
+  if (!jitsiApi) return;
+  jitsiApi.executeCommand('toggleAudio');
+  btn.style.background = btn.style.background === 'rgba(255,255,255,0.1)' ? '#DC2626' : 'rgba(255,255,255,0.1)';
+}
+function toggleCam(btn) {
+  if (!jitsiApi) return;
+  jitsiApi.executeCommand('toggleVideo');
+  btn.style.background = btn.style.background === 'rgba(255,255,255,0.1)' ? '#DC2626' : 'rgba(255,255,255,0.1)';
+}
+function toggleScreen(btn) {
+  if (!jitsiApi) return;
+  jitsiApi.executeCommand('toggleShareScreen');
+}
+
+async function terminerCours() {
+  if (!confirm('Terminer le cours ? Les présences seront enregistrées et les parents notifiés.')) return;
+  if (jitsiApi) jitsiApi.executeCommand('hangup');
+  clearInterval(timerInterval);
+
+  // Appel API pour terminer le cours
+  await fetch(`/api/cours/${COURS_CONFIG.coursId}/terminer`, { method: 'POST',
+    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+  });
+  document.getElementById('statut-badge').textContent = 'TERMINÉ';
+  document.getElementById('statut-badge').style.background = '#6B7A8D';
+  document.getElementById('statut-badge').style.animation = 'none';
+}
+
+// ── Timer ──────────────────────────────────────────────
+function startTimer() {
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    const diff = Math.floor((Date.now() - startTime) / 1000);
+    const h = String(Math.floor(diff / 3600)).padStart(2,'0');
+    const m = String(Math.floor((diff % 3600) / 60)).padStart(2,'0');
+    const s = String(diff % 60).padStart(2,'0');
+    document.getElementById('timer').textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+
+// ── Participants ───────────────────────────────────────
+function updateParticipants() {
+  if (!jitsiApi) return;
+  const count = Object.keys(jitsiApi.getParticipantsInfo()).length + 1;
+  document.getElementById('nb-presents').textContent = `${count} / 28 participants`;
+}
+
+// ── Chat ───────────────────────────────────────────────
+function envoyerChat() {
+  const input = document.getElementById('chat-input');
+  const texte = input.value.trim();
+  if (!texte) return;
+  if (jitsiApi) jitsiApi.executeCommand('sendChatMessage', texte, '');
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML += `<div class="chat-msg"><div class="chat-sender">Moi</div><div class="chat-text">${texte}</div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  input.value = '';
+}
+
+// ── Tabs ───────────────────────────────────────────────
+function setTab(tab, el) {
+  ['participants','chat','infos'].forEach(t => {
+    const el = document.getElementById(`tab-${t}`);
+    if (el) el.style.display = 'none';
+  });
+  document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
+  const target = document.getElementById(`tab-${tab}`);
+  if (target) target.style.display = tab === 'chat' ? 'flex' : 'block';
+  if (el) el.classList.add('active');
+}
+
+// ── Modal TD ───────────────────────────────────────────
+function ouvrirModalTD() { document.getElementById('modal-td').classList.add('open'); }
+function fermerModalTD()  { document.getElementById('modal-td').classList.remove('open'); }
+
+async function sauvegarderTD() {
+  const titre    = document.getElementById('td-titre').value;
+  const desc     = document.getElementById('td-desc').value;
+  const deadline = document.getElementById('td-deadline').value;
+  if (!titre) { alert('Le titre est requis'); return; }
+
+  await fetch(`/api/cours/${COURS_CONFIG.coursId}/td`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',
+               'Authorization': `Bearer ${localStorage.getItem('token')}` },
+    body: JSON.stringify({ titre, description: desc, date_limite: deadline }),
+  });
+
+  fermerModalTD();
+  alert('TD assigné ! Les parents ont été notifiés par WhatsApp.');
+}
+
+// Init
+document.getElementById('cours-titre').textContent = COURS_CONFIG.titre;
+document.getElementById('pre-titre').textContent    = COURS_CONFIG.titre.split(' — ')[0];
+</script>
+</body>
+</html>

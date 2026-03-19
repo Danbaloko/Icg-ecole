@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<style>
+  body{margin:0;padding:0;background:#F0F4F8;font-family:'Segoe UI',Helvetica,Arial,sans-serif;}
+  .wrapper{max-width:560px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;}
+  .header{background:#0B1F3A;padding:32px;text-align:center;}
+  .header-logo{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.5px;}
+  .header-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px;}
+  .alert-band{background:#FEF3DC;border-left:4px solid #D4820A;padding:14px 20px;margin:24px 24px 0;}
+  .alert-band p{margin:0;font-size:14px;color:#92570A;font-weight:600;}
+  .body{padding:24px;}
+  .body p{font-size:14px;color:#4B5563;line-height:1.7;margin:0 0 12px;}
+  .info-box{background:#F8FAFC;border-radius:10px;padding:16px;margin:16px 0;}
+  .info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #E2E8F0;font-size:13px;}
+  .info-row:last-child{border:none;}
+  .info-label{color:#6B7A8D;font-weight:500;}
+  .info-val{color:#0B1F3A;font-weight:600;}
+  .btn{display:block;background:#1558D6;color:#fff;text-align:center;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;margin:20px 0 0;}
+  .footer{background:#F8FAFC;padding:16px 24px;text-align:center;font-size:11px;color:#9CA3AF;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="header-logo">ÉcolePro</div>
+    <div class="header-sub">Système de gestion scolaire</div>
+  </div>
+  <div class="alert-band"><p>⚠ Absence signalée</p></div>
+  <div class="body">
+    <p>Bonjour {{parent.prenom}} {{parent.nom}},</p>
+    <p>Une absence a été enregistrée pour votre enfant <strong>{{eleve.prenom}} {{eleve.nom}}</strong>.</p>
+    <div class="info-box">
+      <div class="info-row"><span class="info-label">Élève</span><span class="info-val">{{eleve.prenom}} {{eleve.nom}}</span></div>
+      <div class="info-row"><span class="info-label">Classe</span><span class="info-val">{{eleve.classe}}</span></div>
+      <div class="info-row"><span class="info-label">Date</span><span class="info-val">{{absence.date}}</span></div>
+      <div class="info-row"><span class="info-label">Durée</span><span class="info-val">{{absence.nb_heures}} heure(s)</span></div>
+      <div class="info-row"><span class="info-label">Matière</span><span class="info-val">{{absence.matiere}}</span></div>
+      <div class="info-row"><span class="info-label">Statut</span><span class="info-val" style="color:#D4820A;">À justifier</span></div>
+    </div>
+    <p>Pour justifier cette absence, connectez-vous à votre espace parent et déposez un document justificatif.</p>
+    <a href="{{app_url}}" class="btn">Justifier l'absence</a>
+  </div>
+  <div class="footer">ÉcolePro — Ce message est automatique, merci de ne pas y répondre.<br/>Si vous pensez avoir reçu ce message par erreur, contactez l'administration.</div>
+</div>
+</body>
+</html>

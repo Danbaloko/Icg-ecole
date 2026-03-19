@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#1A2744"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="ICG École"/>
+<meta name="description" content="Intelligentsia Corporation Gabon — Plateforme scolaire numérique"/>
+<title>ICG — Intelligentsia Corporation Gabon</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════
+   ICG PWA COMPLÈTE — CSS
+═══════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --blue:#4169CB;--blue-d:#2B4DB0;--blue-l:#EEF2FB;
+  --gold:#F5C842;--gold-d:#C8860A;--gold-l:#FEF8DC;
+  --green:#27AE60;--green-l:#E8F8F0;
+  --red:#E74C3C;--red-l:#FDECEB;
+  --orange:#E67E22;--orange-l:#FEF0E6;
+  --purple:#8E44AD;--purple-l:#F3EEF9;
+  --teal:#1ABC9C;--teal-l:#E8F8F5;
+  --navy:#1A2744;--bg:#F2F5FA;--card:#fff;
+  --muted:#7A869A;--border:#E4E9F2;
+  --font:'Outfit',sans-serif;--radius:14px;
+  --sidebar-w:252px;
+}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--font);background:var(--bg);color:var(--navy);display:flex;flex-direction:column;}
+#offline-bar{background:#E74C3C;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:6px;display:none;flex-shrink:0;}
+#offline-bar.show{display:block;}
+.app{display:flex;flex:1;overflow:hidden;}
+
+/* ── SIDEBAR ──────────────────────────────────────── */
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:200;}
+.sidebar::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 1px,transparent 0,transparent 50%);background-size:20px 20px;}
+.sb-header{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,.07);position:relative;}
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-svg{width:38px;height:42px;flex-shrink:0;}
+.brand-tri{font-size:9px;font-weight:800;letter-spacing:.4px;line-height:1.5;}
+.bi{color:#27AE60;}.bc{color:var(--gold);}.bg{color:#7BA3F5;}
+.tagline-s{font-size:8px;color:rgba(255,255,255,.28);margin-top:1px;}
+.nav{flex:1;padding:10px 8px;overflow-y:auto;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.ng{margin-bottom:16px;}
+.ng-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);letter-spacing:1px;text-transform:uppercase;padding:0 8px 7px;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,.48);font-size:12px;font-weight:500;transition:all .14s;margin-bottom:1px;user-select:none;}
+.ni:hover{background:rgba(255,255,255,.06);color:#fff;}
+.ni.active{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;box-shadow:0 3px 10px rgba(65,105,203,.35);}
+.ni svg{width:15px;height:15px;flex-shrink:0;stroke-width:2;fill:none;stroke-linecap:round;}
+.nb{margin-left:auto;font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;}
+.nb-g{background:var(--gold);color:var(--navy);}
+.nb-r{background:#E74C3C;color:#fff;}
+.nb-p{background:var(--purple-l);color:var(--purple);}
+.sb-footer{padding:10px 8px;border-top:1px solid rgba(255,255,255,.07);position:relative;}
+.user-pill{display:flex;align-items:center;gap:9px;padding:9px;border-radius:10px;cursor:pointer;transition:background .14s;}
+.user-pill:hover{background:rgba(255,255,255,.06);}
+.uav{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--gold-d));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+.uname{font-size:12px;font-weight:600;color:#fff;}
+.urole{font-size:10px;color:rgba(255,255,255,.3);}
+.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;backdrop-filter:blur(2px);}
+
+/* ── MAIN ─────────────────────────────────────────── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 18px;height:54px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.menu-btn{display:none;width:34px;height:34px;border-radius:9px;border:1.5px solid var(--border);background:#fff;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.menu-btn svg{width:17px;height:17px;stroke:var(--navy);stroke-width:2;fill:none;}
+.tb-title{font-size:14px;font-weight:700;color:var(--navy);flex:1;}
+.sw{display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:7px 12px;width:210px;transition:border .15s;}
+.sw:focus-within{border-color:var(--blue);}
+.sw input{border:none;background:transparent;font-size:12px;color:var(--navy);outline:none;width:100%;font-family:var(--font);}
+.sw input::placeholder{color:var(--muted);}
+.tb-acts{display:flex;align-items:center;gap:8px;}
+.oi{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;}
+.oi.on{background:var(--green-l);color:#1A7A40;}
+.oi.off{background:var(--red-l);color:#C0392B;}
+.oi .sd{width:6px;height:6px;border-radius:50%;}
+.on .sd{background:var(--green);}
+.off .sd{background:var(--red);}
+.ib{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .14s;}
+.ib:hover{border-color:var(--blue);}
+.ib svg{width:15px;height:15px;stroke:var(--navy);stroke-width:2;fill:none;stroke-linecap:round;}
+.nd{width:7px;height:7px;background:#E74C3C;border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid #fff;}
+.pb{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:var(--font);background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;box-shadow:0 2px 8px rgba(65,105,203,.28);transition:all .14s;}
+.pb:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(65,105,203,.38);}
+.pb svg{width:13px;height:13px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round;}
+.pages{flex:1;overflow-y:auto;padding:18px;}
+.page{display:none;}
+.page.active{display:block;animation:fadeUp .28s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── COMPOSANTS ─────────────────────────────────────── */
+.banner{background:linear-gradient(135deg,var(--navy),#253B70);border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;}
+.banner::after{content:'';position:absolute;right:-20px;top:-20px;width:140px;height:140px;border-radius:50%;background:rgba(245,200,66,.06);}
+.bt{font-size:15px;font-weight:800;line-height:1.3;}
+.bs{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;}
+.bstat{margin-left:auto;text-align:right;position:relative;}
+.bsv{font-size:20px;font-weight:800;color:var(--gold);}
+.bsl{font-size:10px;color:rgba(255,255,255,.35);}
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.sc{background:var(--card);border-radius:var(--radius);padding:16px;border:1px solid var(--border);transition:transform .14s,box-shadow .14s;}
+.sc:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.07);}
+.si{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.si svg{width:18px;height:18px;stroke-width:2;fill:none;stroke-linecap:round;}
+.sl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.sv{font-size:24px;font-weight:800;letter-spacing:-1px;}
+.sch{font-size:10px;font-weight:600;margin-top:3px;}
+.up{color:var(--green);}.dn{color:var(--red);}.fl{color:var(--muted);}
+.tc{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:18px;}
+.te{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.th3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px;}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);}
+.ch{padding:14px 16px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ct{font-size:13px;font-weight:700;color:var(--navy);}
+.cl{font-size:11px;color:var(--blue);font-weight:600;cursor:pointer;}
+.cl:hover{text-decoration:underline;}
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:9px 16px;text-align:left;border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 16px;font-size:12px;color:#4A5568;border-bottom:1px solid #F7F9FC;}
+.tbl tr:last-child td{border:none;}
+.tbl tr:hover td{background:#FAFBFF;}
+.tn{font-weight:700;color:var(--navy);}
+.ts2{font-size:10px;color:var(--muted);margin-top:1px;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;}
+.bb{background:var(--blue-l);color:var(--blue-d);}
+.bg2{background:var(--green-l);color:#1A7A40;}
+.bo{background:var(--gold-l);color:var(--gold-d);}
+.br{background:var(--red-l);color:#C0392B;}
+.bgr{background:#F1F3F5;color:var(--muted);}
+.bp{background:var(--purple-l);color:var(--purple);}
+.bt2{background:var(--teal-l);color:#0E7862;}
+.av{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;}
+.pb2{background:var(--border);border-radius:99px;height:5px;overflow:hidden;}
+.pf{height:100%;border-radius:99px;transition:width .5s;}
+.fg{margin-bottom:12px;}
+.fl2{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:4px;display:block;}
+.fi{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:12px;color:var(--navy);background:#fff;outline:none;font-family:var(--font);transition:border .14s;}
+.fi:focus{border-color:var(--blue);}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fa{display:flex;gap:8px;margin-top:16px;}
+.bsec{padding:8px 16px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--navy);font-family:var(--font);transition:all .14s;}
+.bsec:hover{border-color:var(--blue);color:var(--blue);}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px);}
+.mo.open{display:flex;}
+.mb{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;animation:fadeUp .22s ease;}
+.mt{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:16px;}
+.mc{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);}
+.toast{position:fixed;bottom:22px;right:20px;background:var(--navy);color:#fff;padding:11px 18px;border-radius:11px;font-size:12px;font-weight:600;z-index:1000;transform:translateY(80px);opacity:0;transition:all .28s;display:flex;align-items:center;gap:8px;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.s{background:var(--green);}
+.toast.e{background:var(--red);}
+.mnav{display:none;background:#fff;border-top:1px solid var(--border);padding:8px 0 max(8px,env(safe-area-inset-bottom));flex-shrink:0;}
+.mni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 10px;border:none;background:none;cursor:pointer;font-family:var(--font);}
+.mni svg{width:21px;height:21px;stroke-width:1.8;fill:none;stroke-linecap:round;transition:stroke .14s;}
+.mnl{font-size:9px;font-weight:600;transition:color .14s;}
+.mni.active svg{stroke:var(--blue);}
+.mni.active .mnl{color:var(--blue);}
+.mni:not(.active) svg{stroke:var(--muted);}
+.mni:not(.active) .mnl{color:var(--muted);}
+
+/* ── AVIS ÉLÈVES ─────────────────────────────────── */
+.stars{display:flex;gap:4px;cursor:pointer;}
+.star{font-size:22px;color:#ddd;transition:color .1s;user-select:none;}
+.star.lit{color:var(--gold);}
+.avis-card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:10px;}
+.avis-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.avis-name{font-size:12px;font-weight:700;color:var(--navy);}
+.avis-date{font-size:10px;color:var(--muted);}
+.avis-text{font-size:12px;color:var(--muted);line-height:1.5;margin-top:6px;}
+.rating-bar{display:flex;align-items:center;gap:8px;padding:6px 0;}
+.rb-label{font-size:11px;color:var(--muted);width:40px;}
+.rb-bg{flex:1;background:var(--border);border-radius:99px;height:8px;overflow:hidden;}
+.rb-fill{height:100%;border-radius:99px;background:var(--gold);}
+.rb-num{font-size:11px;font-weight:700;color:var(--navy);width:30px;text-align:right;}
+
+/* ── SURVEILLANCE CAMÉRA ─────────────────────────── */
+.cam-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.cam-card{background:var(--navy);border-radius:12px;overflow:hidden;position:relative;cursor:pointer;transition:transform .14s;}
+.cam-card:hover{transform:scale(1.01);}
+.cam-screen{width:100%;aspect-ratio:16/9;background:#0A0F1E;display:flex;align-items:center;justify-content:center;position:relative;}
+.cam-live{position:absolute;top:8px;left:8px;background:#E74C3C;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;display:flex;align-items:center;gap:4px;}
+.cam-live::before{content:'';width:5px;height:5px;background:#fff;border-radius:50%;animation:blink .8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.cam-rec{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:2px 7px;border-radius:99px;display:flex;align-items:center;gap:4px;}
+.cam-label{padding:8px 12px;display:flex;justify-content:space-between;align-items:center;}
+.cam-name{font-size:12px;font-weight:700;color:#fff;}
+.cam-status{font-size:10px;color:rgba(255,255,255,.45);}
+.cam-icon{width:40px;height:40px;opacity:.15;}
+
+/* Lecteur vidéo replay */
+.video-player{background:#0A0F1E;border-radius:12px;overflow:hidden;margin-bottom:14px;}
+.vp-header{padding:12px 16px;background:#111827;display:flex;justify-content:space-between;align-items:center;}
+.vp-title{font-size:13px;font-weight:700;color:#fff;}
+.vp-dl{background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer;border:none;font-family:var(--font);}
+.vp-screen{aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.vp-play{width:52px;height:52px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.vp-play svg{width:22px;height:22px;fill:#fff;margin-left:3px;}
+.vp-bar{padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.vp-prog{flex:1;height:4px;background:rgba(255,255,255,.2);border-radius:99px;cursor:pointer;}
+.vp-filled{height:100%;border-radius:99px;background:var(--blue);width:35%;}
+.vp-time{font-size:10px;color:rgba(255,255,255,.5);}
+
+/* Replay list */
+.replay-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);}
+.replay-item:last-child{border:none;}
+.replay-thumb{width:64px;height:40px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.replay-thumb svg{width:20px;height:20px;fill:rgba(255,255,255,.3);}
+.replay-info{flex:1;}
+.replay-title{font-size:12px;font-weight:700;color:var(--navy);}
+.replay-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.replay-size{font-size:10px;color:var(--muted);}
+.replay-dl{background:var(--blue-l);color:var(--blue-d);border:none;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);}
+
+/* ── PROFIL / INSTALL ────────────────────────────── */
+.ph{background:linear-gradient(135deg,var(--navy),var(--blue-d));border-radius:var(--radius);padding:22px;margin-bottom:14px;text-align:center;color:#fff;}
+.pa{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--blue),var(--gold-d));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin:0 auto 10px;}
+.pn{font-size:16px;font-weight:800;}
+.pr{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;}
+.pl{list-style:none;}
+.pl li{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px;}
+.pl li:last-child{border:none;}
+.pk{color:var(--muted);}
+.pv{font-weight:700;color:var(--navy);}
+.install-platform{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.ipl{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .14s;}
+.ipl:hover{border-color:var(--blue);background:var(--blue-l);}
+.ipl-icon{font-size:20px;margin-bottom:4px;}
+.ipl-name{font-size:11px;font-weight:700;color:var(--navy);}
+.ipl-desc{font-size:9px;color:var(--muted);margin-top:1px;}
+.qr-box{background:var(--navy);border-radius:12px;padding:16px;text-align:center;margin-bottom:12px;}
+.qr-label{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px;}
+.qr-svg{display:inline-block;background:#fff;padding:8px;border-radius:8px;}
+.qr-url{font-size:11px;color:var(--gold);margin-top:8px;font-weight:600;}
+.install-main-btn{width:100%;padding:13px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:8px;transition:opacity .14s;}
+.install-main-btn:hover{opacity:.9;}
+.install-main-btn.installed{background:linear-gradient(135deg,var(--green),#1A7A40);}
+
+/* ── SCOLARITÉ ───────────────────────────────────── */
+.relance-steps{display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px;}
+.rs{flex:1;text-align:center;padding:10px 6px;border-right:1px solid var(--border);}
+.rs:last-child{border:none;}
+.rs-j{font-size:16px;font-weight:800;}
+.rs-t{font-size:9px;font-weight:700;margin-top:1px;}
+.rs-d{font-size:8px;color:var(--muted);margin-top:2px;}
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media(max-width:768px){
+  :root{--sidebar-w:272px;}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .sb-ov{display:block;}
+  .menu-btn{display:flex;}
+  .sw{display:none;}
+  .pb span{display:none;}
+  .sg{grid-template-columns:1fr 1fr;}
+  .tc,.te,.th3{grid-template-columns:1fr;}
+  .fr{grid-template-columns:1fr;}
+  .pages{padding:14px 14px 80px;}
+  .mnav{display:block;}
+  .topbar{padding:0 12px;height:50px;}
+  .cam-grid{grid-template-columns:1fr;}
+  .install-platform{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:420px){
+  .sg{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div id="offline-bar">⚠ Hors connexion — données en cache</div>
+<div class="app">
+
+<!-- ══ SIDEBAR ══════════════════════════════════════ -->
+<div class="sidebar" id="sb">
+  <div class="sb-header">
+    <div class="logo-row">
+      <svg class="logo-svg" viewBox="0 0 100 110" fill="none">
+        <g fill="#4169CB" opacity=".75"><ellipse cx="14" cy="58" rx="5" ry="2.5" transform="rotate(-40 14 58)"/><ellipse cx="10" cy="50" rx="5" ry="2.5" transform="rotate(-55 10 50)"/><ellipse cx="9" cy="42" rx="5" ry="2.5" transform="rotate(-65 9 42)"/><ellipse cx="86" cy="58" rx="5" ry="2.5" transform="rotate(40 86 58)"/><ellipse cx="90" cy="50" rx="5" ry="2.5" transform="rotate(55 90 50)"/><ellipse cx="91" cy="42" rx="5" ry="2.5" transform="rotate(65 91 42)"/></g>
+        <path d="M20 10 Q20 8 22 8 L78 8 Q80 8 80 10 L80 68 Q80 80 50 92 Q20 80 20 68Z" fill="#4A6CC4"/>
+        <path d="M22 11 L76 11 L78 13 L78 67 Q78 79 50 91 Q22 79 22 67Z" fill="none" stroke="#F5C842" stroke-width="2.2"/>
+        <path d="M30 62 Q30 56 50 54 Q70 56 70 62 L70 72 Q50 70 50 70 Q30 70 30 72Z" fill="#F5C842"/>
+        <path d="M50 54 L50 70" stroke="#C8860A" stroke-width="1.2"/>
+        <circle cx="50" cy="38" r="9" fill="#F5C842"/>
+        <path d="M47 47 L53 47 L52 51 L48 51Z" fill="#999"/>
+        <line x1="50" y1="26" x2="50" y2="23" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="61" y1="29" x2="63" y2="27" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="65" y1="38" x2="68" y2="38" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="39" y1="29" x2="37" y2="27" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="35" y1="38" x2="32" y2="38" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="brand-tri"><span class="bi">INTELLIGENTSIA </span><span class="bc">CORP. </span><span class="bg">GABON</span></div>
+        <div class="tagline-s">Gestion scolaire numérique</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="ng">
+      <div class="ng-lbl">Principal</div>
+      <div class="ni active" onclick="G('dashboard',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tableau de bord</div>
+      <div class="ni" onclick="G('eleves',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Élèves<span class="nb nb-g">347</span></div>
+      <div class="ni" onclick="G('agenda',this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda</div>
+    </div>
+    <div class="ng">
+      <div class="ng-lbl">Pédagogie</div>
+      <div class="ni" onclick="G('notes',this)"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Notes & Bulletins</div>
+      <div class="ni" onclick="G('cours',this)"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Cours vidéo<span class="nb nb-g">3</span></div>
+      <div class="ni" onclick="G('replays',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>Replays &amp; Archives<span class="nb nb-p">12</span></div>
+      <div class="ni" onclick="G('avis',this)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Avis élèves<span class="nb nb-p">8</span></div>
+      <div class="ni" onclick="G('absences',this)"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Absences<span class="nb nb-r">9</span></div>
+    </div>
+    <div class="ng">
+      <div class="ng-lbl">Infrastructure</div>
+      <div class="ni" onclick="G('cameras',this)"><svg viewBox="0 0 24 24"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/><circle cx="7" cy="12" r="1" fill="currentColor"/></svg>Surveillance caméras<span class="nb nb-r">4</span></div>
+      <div class="ni" onclick="G('impression',this)"><svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Impression bulletins</div>
+      <div class="ni" onclick="G('scolarite',this)"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Scolarité &amp; Paiements<span class="nb nb-r">47</span></div>
+    </div>
+    <div class="ng">
+      <div class="ng-lbl">Administration</div>
+      <div class="ni" onclick="G('enseignants',this)"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Enseignants</div>
+      <div class="ni" onclick="G('parents',this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="23" y2="17"/><line x1="20" y1="14" x2="26" y2="14"/></svg>Parents &amp; Contacts</div>
+      <div class="ni" onclick="G('profil',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Profil &amp; Installation</div>
+    </div>
+  </div>
+  <div class="sb-footer">
+    <div class="user-pill" onclick="G('profil',null)">
+      <div class="uav">AD</div>
+      <div><div class="uname">Administrateur ICG</div><div class="urole">Super Admin</div></div>
+    </div>
+  </div>
+</div>
+<div class="sb-ov" id="sb-ov" onclick="closeSB()"></div>
+
+<!-- ══ MAIN ═════════════════════════════════════════ -->
+<div class="main">
+  <div class="topbar">
+    <button class="menu-btn" onclick="toggleSB()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <div class="tb-title" id="ptitle">Tableau de bord</div>
+    <div class="sw"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Rechercher…" oninput="doSearch(this.value)"/></div>
+    <div class="tb-acts">
+      <div class="oi on" id="os"><div class="sd"></div><span>En ligne</span></div>
+      <div class="ib" onclick="showNotif()"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="nd"></div></div>
+      <button class="pb" onclick="OM('m-eleve')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Nouvel élève</span></button>
+    </div>
+  </div>
+
+  <div class="pages">
+
+<!-- ══ DASHBOARD ══════════════════════════════════ -->
+<div class="page active" id="p-dashboard">
+  <div class="banner">
+    <svg width="48" height="54" viewBox="0 0 100 110" fill="none"><g fill="#4169CB" opacity=".6"><ellipse cx="14" cy="58" rx="5" ry="2.5" transform="rotate(-40 14 58)"/><ellipse cx="86" cy="58" rx="5" ry="2.5" transform="rotate(40 86 58)"/></g><path d="M20 10Q20 8 22 8L78 8Q80 8 80 10L80 68Q80 80 50 92Q20 80 20 68Z" fill="#5A7ED4"/><path d="M22 11L76 11L78 13L78 67Q78 79 50 91Q22 79 22 67Z" fill="none" stroke="#F5C842" stroke-width="2.2"/><path d="M30 62Q30 56 50 54Q70 56 70 62L70 72Q50 70 50 70Q30 70 30 72Z" fill="#F5C842"/><circle cx="50" cy="38" r="9" fill="#F5C842"/><line x1="50" y1="26" x2="50" y2="23" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/><line x1="65" y1="38" x2="68" y2="38" stroke="#F5C842" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <div><div class="bt"><span style="color:#27AE60">INTELLIGENTSIA </span><span style="color:var(--gold)">CORPORATION </span><span style="color:#7BA3F5">GABON</span></div><div class="bs">Plateforme scolaire numérique — Année 2024–2025 · T2</div></div>
+    <div class="bstat"><div class="bsv" id="clk">--:--</div><div class="bsl" id="cld">Chargement…</div></div>
+  </div>
+  <div class="sg">
+    <div class="sc"><div class="si" style="background:var(--blue-l)"><svg stroke="var(--blue)" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="sl">Élèves</div><div class="sv" style="color:var(--blue)">347</div><div class="sch up">↑ +15 T2</div></div>
+    <div class="sc"><div class="si" style="background:var(--green-l)"><svg stroke="var(--green)" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="sl">Présence</div><div class="sv" style="color:var(--green)">93%</div><div class="sch dn">↓ −1%</div></div>
+    <div class="sc"><div class="si" style="background:var(--gold-l)"><svg stroke="var(--gold-d)" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="sl">Avis reçus</div><div class="sv" style="color:var(--gold-d)" id="nb-avis">124</div><div class="sch up">Moy. 4.3⭐</div></div>
+    <div class="sc"><div class="si" style="background:var(--purple-l)"><svg stroke="var(--purple)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div><div class="sl">Replays</div><div class="sv" style="color:var(--purple)">48</div><div class="sch fl">Enregistrements</div></div>
+  </div>
+  <div class="tc">
+    <div class="card">
+      <div class="ch"><div class="ct">Derniers avis élèves</div><span class="cl" onclick="G('avis',null)">Tous →</span></div>
+      <div style="padding:12px 16px">
+        <div class="avis-card"><div class="avis-head"><div class="avis-name">Kofi Ondo — Maths 6A</div><div style="color:var(--gold)">★★★★★</div></div><div class="avis-text">Cours très bien expliqué, j'ai tout compris ! Merci M. Bouanga.</div></div>
+        <div class="avis-card"><div class="avis-head"><div class="avis-name">Ama Mbeng — Français 5B</div><div style="color:var(--gold)">★★★★☆</div></div><div class="avis-text">Bon cours mais un peu rapide sur les conjugaisons.</div></div>
+        <div class="avis-card"><div class="avis-head"><div class="avis-name">Nzeng Diallo — Sciences 4A</div><div style="color:var(--gold)">★★★★★</div></div><div class="avis-text">Excellent ! Le replay est très utile pour réviser.</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Caméras actives</div><span class="cl" onclick="G('cameras',null)">Voir →</span></div>
+      <div style="padding:12px">
+        <div class="cam-card" style="margin-bottom:8px" onclick="G('cameras',null)">
+          <div class="cam-screen" style="aspect-ratio:16/9"><div class="cam-live">LIVE</div><div class="cam-rec">⏺ REC</div><svg class="cam-icon" viewBox="0 0 24 24" fill="white"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <div class="cam-label"><div class="cam-name">Salle 01 — 6ème A</div><div class="cam-status">28 élèves · HD</div></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <div class="badge bg2" style="flex:1;justify-content:center">4 caméras actives</div>
+          <div class="badge bb" style="flex:1;justify-content:center">Archives 30j</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ AVIS ÉLÈVES ════════════════════════════════ -->
+<div class="page" id="p-avis">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div><div style="font-size:19px;font-weight:800">Avis des élèves</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Évaluation après chaque cours · Déclenchement automatique</div></div>
+    <button class="pb" onclick="OM('m-avis')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Donner mon avis</span></button>
+  </div>
+  <div class="te" style="margin-bottom:14px">
+    <div class="card" style="padding:16px;text-align:center">
+      <div style="font-size:36px;font-weight:800;color:var(--gold)">4.3</div>
+      <div style="color:var(--gold);font-size:20px;margin:4px 0">★★★★☆</div>
+      <div style="font-size:11px;color:var(--muted)">Note moyenne globale</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">sur 124 avis ce trimestre</div>
+    </div>
+    <div class="card" style="padding:16px">
+      <div style="font-size:12px;font-weight:700;margin-bottom:10px">Répartition des notes</div>
+      <div class="rating-bar"><div class="rb-label">5 ⭐</div><div class="rb-bg"><div class="rb-fill" style="width:58%"></div></div><div class="rb-num">72</div></div>
+      <div class="rating-bar"><div class="rb-label">4 ⭐</div><div class="rb-bg"><div class="rb-fill" style="width:26%"></div></div><div class="rb-num">32</div></div>
+      <div class="rating-bar"><div class="rb-label">3 ⭐</div><div class="rb-bg"><div class="rb-fill" style="width:11%;background:var(--orange)"></div></div><div class="rb-num">14</div></div>
+      <div class="rating-bar"><div class="rb-label">2 ⭐</div><div class="rb-bg"><div class="rb-fill" style="width:4%;background:var(--red)"></div></div><div class="rb-num">5</div></div>
+      <div class="rating-bar"><div class="rb-label">1 ⭐</div><div class="rb-bg"><div class="rb-fill" style="width:1%;background:var(--red)"></div></div><div class="rb-num">1</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Tous les avis reçus</div><select class="fi" style="width:auto;padding:4px 8px;font-size:11px"><option>Tous les cours</option><option>Mathématiques</option><option>Français</option></select></div>
+    <div style="padding:12px 16px">
+      <div class="avis-card"><div class="avis-head"><div><div class="avis-name">Kofi Ondo</div><div class="avis-date">Maths · 6ème A · Auj. 10h30</div></div><div style="color:var(--gold);font-size:16px">★★★★★</div></div><div class="avis-text">Cours très bien structuré et expliqué. Les exemples étaient clairs. J'aimerais plus d'exercices pratiques.</div></div>
+      <div class="avis-card"><div class="avis-head"><div><div class="avis-name">Ama Mbeng</div><div class="avis-date">Français · 5ème B · Auj. 09h15</div></div><div style="color:var(--gold);font-size:16px">★★★★☆</div></div><div class="avis-text">Bon cours mais un peu rapide sur les conjugaisons au passé composé. Le replay m'a beaucoup aidé.</div></div>
+      <div class="avis-card"><div class="avis-head"><div><div class="avis-name">Nzeng Diallo</div><div class="avis-date">Sciences · 4ème A · Hier 14h00</div></div><div style="color:var(--gold);font-size:16px">★★★★★</div></div><div class="avis-text">Excellent cours ! Le professeur explique très bien. J'ai téléchargé le replay pour réviser avant l'examen.</div></div>
+      <div class="avis-card"><div class="avis-head"><div><div class="avis-name">Jean-Paul Moubamba</div><div class="avis-date">Anglais · 4ème A · Hier 11h00</div></div><div style="color:var(--gold);font-size:16px">★★★☆☆</div></div><div class="avis-text">Cours correct mais il manquait des exercices interactifs. La connexion vidéo a coupé 2 fois.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CAMÉRAS SURVEILLANCE ════════════════════════ -->
+<div class="page" id="p-cameras">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div><div style="font-size:19px;font-weight:800">Surveillance caméras</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Vision en direct · Enregistrement continu · Archives 30 jours</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="bsec" style="font-size:12px" onclick="T('Enregistrement global lancé sur toutes les caméras','s')">⏺ Tout enregistrer</button>
+      <button class="pb" onclick="T('Archives téléchargées','s')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Archives</span></button>
+    </div>
+  </div>
+  <div class="cam-grid">
+    <div class="cam-card" onclick="openCam('Salle 01 — 6ème A')">
+      <div class="cam-screen"><div class="cam-live">LIVE</div><div class="cam-rec">⏺ REC</div><svg style="width:48px;height:48px;opacity:.12" viewBox="0 0 24 24" fill="white"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+      <div class="cam-label"><div class="cam-name">Salle 01 — 6ème A</div><div class="cam-status">28 élèves · 1080p HD</div></div>
+    </div>
+    <div class="cam-card" onclick="openCam('Salle 05 — 5ème B')">
+      <div class="cam-screen" style="background:#0C1222"><div class="cam-live">LIVE</div><div class="cam-rec">⏺ REC</div><svg style="width:48px;height:48px;opacity:.12" viewBox="0 0 24 24" fill="white"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+      <div class="cam-label"><div class="cam-name">Salle 05 — 5ème B</div><div class="cam-status">22 élèves · 720p</div></div>
+    </div>
+    <div class="cam-card" onclick="openCam('Salle 12 — 4ème A')">
+      <div class="cam-screen" style="background:#0F1828"><div class="cam-live">LIVE</div><div class="cam-rec">⏺ REC</div><svg style="width:48px;height:48px;opacity:.12" viewBox="0 0 24 24" fill="white"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+      <div class="cam-label"><div class="cam-name">Salle 12 — 4ème A</div><div class="cam-status">29 élèves · 1080p HD</div></div>
+    </div>
+    <div class="cam-card" onclick="openCam('Couloir principal')">
+      <div class="cam-screen" style="background:#080E18"><div class="cam-live">LIVE</div><svg style="width:48px;height:48px;opacity:.12" viewBox="0 0 24 24" fill="white"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+      <div class="cam-label"><div class="cam-name">Couloir principal</div><div class="cam-status">Surveillance · 720p</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Archives vidéo</div><select class="fi" style="width:auto;padding:4px 8px;font-size:11px"><option>Aujourd'hui</option><option>Hier</option><option>Cette semaine</option></select></div>
+    <table class="tbl">
+      <tr><th>Salle</th><th>Date & heure</th><th>Durée</th><th>Taille</th><th>Statut</th><th></th></tr>
+      <tr><td class="tn">Salle 01</td><td style="font-size:11px">19/03/2026 · 08h00–12h00</td><td>4h00</td><td>2.1 Go</td><td><span class="badge bg2">Archivé</span></td><td><button class="replay-dl" onclick="T('Téléchargement de larchive démarré','s')">Télécharger</button></td></tr>
+      <tr><td class="tn">Salle 05</td><td style="font-size:11px">19/03/2026 · 08h00–12h00</td><td>4h00</td><td>1.8 Go</td><td><span class="badge bg2">Archivé</span></td><td><button class="replay-dl" onclick="T('Téléchargement démarré','s')">Télécharger</button></td></tr>
+      <tr><td class="tn">Salle 12</td><td style="font-size:11px">18/03/2026 · 08h00–17h00</td><td>9h00</td><td>4.7 Go</td><td><span class="badge bg2">Archivé</span></td><td><button class="replay-dl" onclick="T('Téléchargement démarré','s')">Télécharger</button></td></tr>
+    </table>
+    <div style="padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">Les enregistrements sont conservés automatiquement 30 jours puis archivés sur stockage longue durée.</div>
+  </div>
+</div>
+
+<!-- ══ REPLAYS & ARCHIVES COURS ════════════════════ -->
+<div class="page" id="p-replays">
+  <div style="font-size:19px;font-weight:800;margin-bottom:4px">Replays des cours</div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Cours enregistrés · Téléchargeables par les élèves</div>
+  <div class="video-player">
+    <div class="vp-header">
+      <div class="vp-title">Mathématiques — 6ème A · M. Bouanga · 19/03/2026</div>
+      <button class="vp-dl" onclick="T('Téléchargement MP4 démarré (245 Mo)','s')">⬇ Télécharger MP4</button>
+    </div>
+    <div class="vp-screen" onclick="T('Lecture du replay en cours…')">
+      <div class="vp-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      <div style="position:absolute;bottom:12px;left:16px;font-size:10px;color:rgba(255,255,255,.5)">Cliquer pour lire</div>
+    </div>
+    <div class="vp-bar">
+      <div style="font-size:10px;color:rgba(255,255,255,.5)">00:00</div>
+      <div class="vp-prog"><div class="vp-filled"></div></div>
+      <div class="vp-time">42:17</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Tous les replays disponibles</div>
+      <select class="fi" style="width:auto;padding:4px 8px;font-size:11px"><option>Tous</option><option>Maths</option><option>Français</option><option>Sciences</option></select>
+    </div>
+    <div class="replay-item">
+      <div class="replay-thumb"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      <div class="replay-info"><div class="replay-title">Mathématiques — Fractions · 6ème A</div><div class="replay-meta">M. Bouanga · 19/03/2026 · 42 min</div></div>
+      <div style="text-align:right"><div class="replay-size">245 Mo</div><button class="replay-dl" style="margin-top:4px" onclick="T('Téléchargement MP4 démarré','s')">⬇ MP4</button></div>
+    </div>
+    <div class="replay-item">
+      <div class="replay-thumb"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      <div class="replay-info"><div class="replay-title">Français — Conjugaison · 5ème B</div><div class="replay-meta">Mme Nzoghe · 18/03/2026 · 38 min</div></div>
+      <div style="text-align:right"><div class="replay-size">212 Mo</div><button class="replay-dl" style="margin-top:4px" onclick="T('Téléchargement MP4 démarré','s')">⬇ MP4</button></div>
+    </div>
+    <div class="replay-item">
+      <div class="replay-thumb"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      <div class="replay-info"><div class="replay-title">Sciences — La cellule · 4ème A</div><div class="replay-meta">M. Mba · 17/03/2026 · 55 min</div></div>
+      <div style="text-align:right"><div class="replay-size">318 Mo</div><button class="replay-dl" style="margin-top:4px" onclick="T('Téléchargement MP4 démarré','s')">⬇ MP4</button></div>
+    </div>
+    <div class="replay-item">
+      <div class="replay-thumb"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      <div class="replay-info"><div class="replay-title">Histoire — Le Gabon colonial · 3ème C</div><div class="replay-meta">Mme Obiang · 16/03/2026 · 50 min</div></div>
+      <div style="text-align:right"><div class="replay-size">290 Mo</div><button class="replay-dl" style="margin-top:4px" onclick="T('Téléchargement MP4 démarré','s')">⬇ MP4</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROFIL & INSTALLATION PWA ══════════════════ -->
+<div class="page" id="p-profil">
+  <div class="ph">
+    <div class="pa">AD</div>
+    <div class="pn">Administrateur ICG</div>
+    <div class="pr">Intelligentsia Corporation Gabon · Super Admin</div>
+  </div>
+  <div class="te">
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="ch"><div class="ct">Informations</div></div>
+        <ul class="pl">
+          <li><span class="pk">Établissement</span><span class="pv">ICG Libreville</span></li>
+          <li><span class="pk">Email</span><span class="pv">admin@icg-gabon.ga</span></li>
+          <li><span class="pk">Rôle</span><span class="pv"><span class="badge bb">Super Admin</span></span></li>
+          <li><span class="pk">Service Worker</span><span class="pv"><span class="badge bg2" id="sw-s">Actif</span></span></li>
+          <li><span class="pk">Cache offline</span><span class="pv"><span class="badge bg2" id="cache-s">Prêt</span></span></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <!-- QR CODE & LIEN -->
+      <div class="qr-box" style="margin-bottom:12px">
+        <div class="qr-label">Scanner pour télécharger l'application ICG</div>
+        <div class="qr-svg">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <!-- QR code simulé -->
+            <rect width="120" height="120" fill="white"/>
+            <g fill="black">
+              <rect x="10" y="10" width="30" height="30"/><rect x="13" y="13" width="24" height="24" fill="white"/><rect x="16" y="16" width="18" height="18"/>
+              <rect x="80" y="10" width="30" height="30"/><rect x="83" y="13" width="24" height="24" fill="white"/><rect x="86" y="16" width="18" height="18"/>
+              <rect x="10" y="80" width="30" height="30"/><rect x="13" y="83" width="24" height="24" fill="white"/><rect x="16" y="86" width="18" height="18"/>
+              <rect x="50" y="10" width="6" height="6"/><rect x="60" y="10" width="6" height="6"/><rect x="70" y="10" width="6" height="6"/>
+              <rect x="50" y="20" width="6" height="6"/><rect x="60" y="24" width="6" height="6"/>
+              <rect x="50" y="30" width="6" height="6"/><rect x="64" y="34" width="6" height="6"/>
+              <rect x="50" y="50" width="6" height="6"/><rect x="60" y="50" width="6" height="6"/><rect x="70" y="50" width="6" height="6"/>
+              <rect x="80" y="50" width="6" height="6"/><rect x="90" y="50" width="6" height="6"/><rect x="100" y="50" width="6" height="6"/>
+              <rect x="50" y="60" width="6" height="6"/><rect x="70" y="60" width="6" height="6"/><rect x="90" y="64" width="6" height="6"/>
+              <rect x="54" y="70" width="6" height="6"/><rect x="64" y="70" width="6" height="6"/><rect x="80" y="70" width="6" height="6"/><rect x="100" y="70" width="6" height="6"/>
+              <rect x="50" y="80" width="6" height="6"/><rect x="60" y="80" width="6" height="6"/><rect x="74" y="80" width="6" height="6"/><rect x="90" y="80" width="6" height="6"/>
+              <rect x="50" y="90" width="6" height="6"/><rect x="70" y="90" width="6" height="6"/><rect x="84" y="90" width="6" height="6"/><rect x="100" y="90" width="6" height="6"/>
+              <rect x="54" y="100" width="6" height="6"/><rect x="64" y="100" width="6" height="6"/><rect x="80" y="100" width="6" height="6"/><rect x="94" y="100" width="6" height="6"/>
+            </g>
+          </svg>
+        </div>
+        <div class="qr-url">https://icg-gabon.ga/app</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:4px">Disponible sur tous les appareils</div>
+      </div>
+
+      <!-- PLATEFORMES -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="ch"><div class="ct">Installer sur votre appareil</div></div>
+        <div style="padding:12px">
+          <div class="install-platform">
+            <div class="ipl" onclick="installOn('Android')">
+              <div class="ipl-icon">🤖</div>
+              <div class="ipl-name">Android</div>
+              <div class="ipl-desc">Chrome → Menu → Installer</div>
+            </div>
+            <div class="ipl" onclick="installOn('iPhone')">
+              <div class="ipl-icon">📱</div>
+              <div class="ipl-name">iPhone / iPad</div>
+              <div class="ipl-desc">Safari → Partager → Accueil</div>
+            </div>
+            <div class="ipl" onclick="installOn('Windows')">
+              <div class="ipl-icon">💻</div>
+              <div class="ipl-name">Windows</div>
+              <div class="ipl-desc">Edge/Chrome → Installer</div>
+            </div>
+            <div class="ipl" onclick="installOn('Mac')">
+              <div class="ipl-icon">🖥️</div>
+              <div class="ipl-name">macOS</div>
+              <div class="ipl-desc">Safari/Chrome → Installer</div>
+            </div>
+            <div class="ipl" onclick="installOn('Tablette')">
+              <div class="ipl-icon">📲</div>
+              <div class="ipl-name">Tablette</div>
+              <div class="ipl-desc">Chrome → Installer l'app</div>
+            </div>
+            <div class="ipl" onclick="copyLink()">
+              <div class="ipl-icon">🔗</div>
+              <div class="ipl-name">Lien direct</div>
+              <div class="ipl-desc">Copier le lien</div>
+            </div>
+          </div>
+          <button class="install-main-btn" id="ibtn" onclick="installPWA()">⬇ Installer l'application ICG</button>
+          <div style="font-size:10px;color:var(--muted);text-align:center" id="istatus">Application PWA — fonctionne hors connexion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGES SIMPLIFIÉES (notes, eleves, etc.) ════ -->
+<div class="page" id="p-eleves">
+  <div style="font-size:19px;font-weight:800;margin-bottom:16px">Élèves (347)</div>
+  <div class="card"><div class="ch"><div class="ct">Liste des élèves</div></div>
+  <table class="tbl"><tr><th>Élève</th><th>Classe</th><th>Moy.</th><th>Scolarité</th><th>Statut</th><th></th></tr>
+  <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:linear-gradient(135deg,#4169CB,#2B4DB0)">KO</div><div><div class="tn">Kofi Ondo</div><div class="ts2">06 11 22 33</div></div></div></td><td><span class="badge bb">6A</span></td><td style="font-weight:800;color:var(--green)">15.4</td><td><span class="badge bg2">Payé</span></td><td><span class="badge bg2">Actif</span></td><td><button class="bsec" style="font-size:11px;padding:4px 8px" onclick="T('Dossier Kofi Ondo ouvert')">Dossier</button></td></tr>
+  <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:linear-gradient(135deg,#E74C3C,#C0392B)">EO</div><div><div class="tn">Estelle Oba</div><div class="ts2">06 22 33 44</div></div></div></td><td><span class="badge bb">3C</span></td><td style="font-weight:800;color:var(--red)">8.1</td><td><span class="badge br">Suspendue</span></td><td><span class="badge br">Bloquée</span></td><td><button class="bsec" style="font-size:11px;padding:4px 8px" onclick="T('Dossier Estelle Oba ouvert')">Dossier</button></td></tr>
+  </table></div>
+</div>
+<div class="page" id="p-notes"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Notes & Bulletins</div><div class="card" style="padding:20px;text-align:center"><div style="font-size:26px;font-weight:800;color:var(--blue)">13.9 / 20</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Moyenne générale T2</div><button class="pb" style="margin-top:14px" onclick="T('Génération en cours…','s')">Générer les bulletins</button></div></div>
+<div class="page" id="p-agenda"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Agenda scolaire</div><div class="card" style="padding:16px"><div class="avis-card"><div class="avis-head"><div class="avis-name">Cours vidéo — Maths 6A</div><span class="badge bb">08h30 · EN COURS</span></div></div><div class="avis-card"><div class="avis-head"><div class="avis-name">Réunion parents — 4ème A</div><span class="badge bo">14h00 · Demain</span></div></div><div class="avis-card"><div class="avis-head"><div class="avis-name">Génération bulletins T2</div><span class="badge bp">16h30 · Vendredi</span></div></div></div></div>
+<div class="page" id="p-cours"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Cours vidéo</div><div class="th3"><div class="card" style="padding:16px;border-left:4px solid var(--red)"><span class="badge br">EN DIRECT</span><div style="font-size:13px;font-weight:700;margin:8px 0 4px">Maths 6ème A</div><div style="font-size:11px;color:var(--muted)">M. Bouanga · 24/28</div><button class="pb" style="margin-top:10px;width:100%;justify-content:center;font-size:12px" onclick="T('Connexion Jitsi…','s')">Rejoindre</button></div><div class="card" style="padding:16px;border-left:4px solid var(--gold-d)"><span class="badge bo">PLANIFIÉ</span><div style="font-size:13px;font-weight:700;margin:8px 0 4px">Français 5ème B</div><div style="font-size:11px;color:var(--muted)">Mme Nzoghe · 14h00</div><button class="bsec" style="margin-top:10px;width:100%;font-size:12px" onclick="T('Rappel WhatsApp envoyé','s')">Rappel WA</button></div><div class="card" style="padding:16px;border-left:4px solid var(--green)"><span class="badge bg2">TERMINÉ</span><div style="font-size:13px;font-weight:700;margin:8px 0 4px">Sciences 4ème A</div><div style="font-size:11px;color:var(--muted)">M. Mba · 55 min</div><button class="bsec" style="margin-top:10px;width:100%;font-size:12px" onclick="G('replays',null)">Voir replay</button></div></div></div>
+<div class="page" id="p-absences"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Absences</div><div class="card"><div class="ch"><div class="ct">9 absences non justifiées</div><button class="bsec" style="font-size:12px" onclick="T('WhatsApp envoyé à 9 parents','s')">Notifier WhatsApp</button></div><table class="tbl"><tr><th>Élève</th><th>Date</th><th>Matière</th><th>Statut</th><th></th></tr><tr><td class="tn">Estelle Oba</td><td>19/03</td><td>Français</td><td><span class="badge br">Non justifiée</span></td><td><button class="bsec" style="font-size:11px;padding:4px 8px" onclick="T('Justifiée','s')">Justifier</button></td></tr><tr><td class="tn">Ama Mbeng</td><td>18/03</td><td>Maths</td><td><span class="badge bo">En attente</span></td><td><button class="bsec" style="font-size:11px;padding:4px 8px" onclick="T('Justifiée','s')">Justifier</button></td></tr></table></div></div>
+<div class="page" id="p-impression"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Impression bulletins</div><div class="card" style="padding:18px"><div class="fr"><div><label class="fl2">Classe</label><select class="fi"><option>Toutes (108)</option><option>6ème A (28)</option><option>5ème B (30)</option></select></div><div><label class="fl2">Trimestre</label><select class="fi"><option>T2</option><option>T1</option></select></div></div><div style="margin-top:12px"><label class="fl2">Mode</label><select class="fi"><option>Télécharger PDF</option><option>Imprimante réseau</option><option>Email parents</option></select></div><button class="pb" style="margin-top:14px;width:100%;justify-content:center" onclick="printSim()"><svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Lancer l'impression</button><div id="pbar-w" style="margin-top:12px;display:none"><div class="pb2" style="height:10px"><div id="pbar-f" class="pf" style="width:0%;background:var(--blue)"></div></div><div id="pbar-t" style="font-size:11px;color:var(--muted);margin-top:4px">Préparation…</div></div></div></div>
+<div class="page" id="p-scolarite"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Scolarité & Paiements</div><div class="relance-steps"><div class="rs" style="background:var(--blue-l)"><div class="rs-j" style="color:var(--blue)">J+1</div><div class="rs-t" style="color:var(--blue)">SMS</div><div class="rs-d">Rappel</div></div><div class="rs" style="background:var(--gold-l)"><div class="rs-j" style="color:var(--gold-d)">J+7</div><div class="rs-t" style="color:var(--gold-d)">WhatsApp</div><div class="rs-d">Délai 7j</div></div><div class="rs" style="background:var(--orange-l)"><div class="rs-j" style="color:var(--orange)">J+10</div><div class="rs-t" style="color:var(--orange)">Urgent</div><div class="rs-d">Dernière chance</div></div><div class="rs" style="background:var(--red-l)"><div class="rs-j" style="color:var(--red)">J+14</div><div class="rs-t" style="color:var(--red)">Suspension</div><div class="rs-d">Accès bloqué</div></div><div class="rs" style="background:var(--green-l)"><div class="rs-j" style="color:var(--green)">Paiement</div><div class="rs-t" style="color:var(--green)">Réactivation</div><div class="rs-d">Immédiate</div></div></div><div class="card" style="margin-top:14px"><div class="ch"><div class="ct">Retardataires</div><button class="bsec" style="font-size:12px" onclick="T('47 vérifications lancées','s')">Vérifier maintenant</button></div><table class="tbl"><tr><th>Élève</th><th>Retard</th><th>Dû</th><th>Statut</th><th></th></tr><tr><td class="tn">Estelle Oba</td><td style="color:var(--red);font-weight:700">18j</td><td>50 000 FCFA</td><td><span class="badge br">Suspendue</span></td><td><button class="bsec" style="font-size:11px;padding:4px 8px;color:var(--green)" onclick="T('Paiement validé — Accès rétabli','s')">Payer</button></td></tr><tr><td class="tn">Ama Mbeng</td><td style="color:var(--orange);font-weight:700">9j</td><td>50 000 FCFA</td><td><span class="badge bo">Retard</span></td><td><button class="bsec" style="font-size:11px;padding:4px 8px;color:var(--green)" onclick="T('Paiement validé','s')">Payer</button></td></tr></table></div></div>
+<div class="page" id="p-enseignants"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Enseignants</div><div class="card"><table class="tbl"><tr><th>Enseignant</th><th>Matière</th><th>Cours mois</th><th>Avis moyen</th></tr><tr><td><div style="display:flex;gap:8px;align-items:center"><div class="av" style="background:linear-gradient(135deg,#4169CB,#2B4DB0)">MB</div><div class="tn">M. Bouanga</div></div></td><td>Mathématiques</td><td style="font-weight:700;color:var(--blue)">18</td><td style="color:var(--gold)">★★★★★ 4.8</td></tr><tr><td><div style="display:flex;gap:8px;align-items:center"><div class="av" style="background:linear-gradient(135deg,#27AE60,#1A7A40)">NZ</div><div class="tn">Mme Nzoghe</div></div></td><td>Français</td><td style="font-weight:700;color:var(--blue)">16</td><td style="color:var(--gold)">★★★★☆ 4.2</td></tr></table></div></div>
+<div class="page" id="p-parents"><div style="font-size:19px;font-weight:800;margin-bottom:16px">Parents & Contacts</div><div class="card"><table class="tbl"><tr><th>Parent</th><th>Élève</th><th>WhatsApp</th><th>Dernière notif.</th></tr><tr><td class="tn">Mme Ondo</td><td>Kofi · 6A</td><td><span class="badge bg2">Actif</span></td><td style="font-size:11px">Auj. 19h00</td></tr><tr><td class="tn">M. Oba</td><td>Estelle · 3C</td><td><span class="badge br">Inactif</span></td><td style="font-size:11px">Il y a 3j</td></tr></table></div></div>
+
+
+    <!-- ── AVIS ÉLÈVES ────────────────────────────────── -->
+    <div class="page" id="page-avis">
+      <div style="font-size:20px;font-weight:800;margin-bottom:4px">Avis des élèves</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Notification automatique après chaque cours · Analyse des résultats</div>
+
+      <div class="three-col" style="margin-bottom:16px">
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:32px;font-weight:800;color:var(--gold-d)">★ 4.2</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">Note moyenne globale</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:var(--blue)">214</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">Avis reçus ce mois</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:var(--green)">87%</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">Taux de réponse</div>
+        </div>
+      </div>
+
+      <div class="two-equal">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-h"><div class="card-title">Avis récents par cours</div></div>
+          <table class="tbl">
+            <tr><th>Cours</th><th>Date</th><th>Avis</th><th>Note</th></tr>
+            <tr>
+              <td><div class="tbl-name">Mathématiques 6A</div><div class="tbl-sub">M. Bouanga</div></td>
+              <td style="font-size:12px">Auj. 10h00</td>
+              <td style="font-size:12px">24/28</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="font-weight:800;color:var(--gold-d)">4.5</span>
+                  <span style="color:var(--gold);font-size:14px">★★★★★</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="tbl-name">Français 5B</div><div class="tbl-sub">Mme Nzoghe</div></td>
+              <td style="font-size:12px">Hier 14h00</td>
+              <td style="font-size:12px">28/30</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="font-weight:800;color:var(--gold-d)">3.8</span>
+                  <span style="color:var(--gold);font-size:14px">★★★★</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="tbl-name">Sciences 4A</div><div class="tbl-sub">M. Mba</div></td>
+              <td style="font-size:12px">Hier 09h00</td>
+              <td style="font-size:12px">22/26</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="font-weight:800;color:var(--green)">4.8</span>
+                  <span style="color:var(--gold);font-size:14px">★★★★★</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-title">Commentaires récents</div></div>
+          <div style="padding:14px 18px">
+            <div style="padding:10px;background:var(--green-l);border-radius:10px;margin-bottom:10px">
+              <div style="font-size:11px;color:var(--green);font-weight:700;margin-bottom:4px">★★★★★ · Maths 6A · Anonyme</div>
+              <div style="font-size:13px;color:var(--navy)">"Cours très bien expliqué, M. Bouanga prend le temps de répondre à nos questions."</div>
+            </div>
+            <div style="padding:10px;background:var(--gold-l);border-radius:10px;margin-bottom:10px">
+              <div style="font-size:11px;color:var(--gold-d);font-weight:700;margin-bottom:4px">★★★★ · Français 5B · Anonyme</div>
+              <div style="font-size:13px;color:var(--navy)">"Bon cours mais le son était un peu faible pendant la visio."</div>
+            </div>
+            <div style="padding:10px;background:var(--red-l);border-radius:10px">
+              <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px">★★★ · Anglais 3C · Anonyme</div>
+              <div style="font-size:13px;color:var(--navy)">"Le cours allait trop vite, difficile de prendre des notes."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire avis (simulé) -->
+      <div class="card">
+        <div class="card-h"><div class="card-title">Soumettre un avis (simulation)</div></div>
+        <div style="padding:18px">
+          <div class="form-group"><label class="form-label">Cours</label>
+            <select class="form-input"><option>Mathématiques 6A — Aujourd'hui</option><option>Français 5B — Hier</option></select></div>
+          <div class="form-group">
+            <label class="form-label">Note (1 à 5 étoiles)</label>
+            <div style="display:flex;gap:8px;margin-top:6px" id="stars">
+              <span onclick="setNote(1)" style="font-size:28px;cursor:pointer;color:var(--border)">★</span>
+              <span onclick="setNote(2)" style="font-size:28px;cursor:pointer;color:var(--border)">★</span>
+              <span onclick="setNote(3)" style="font-size:28px;cursor:pointer;color:var(--border)">★</span>
+              <span onclick="setNote(4)" style="font-size:28px;cursor:pointer;color:var(--border)">★</span>
+              <span onclick="setNote(5)" style="font-size:28px;cursor:pointer;color:var(--border)">★</span>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Commentaire (optionnel)</label>
+            <textarea class="form-input" rows="3" placeholder="Votre avis sur ce cours…" id="avis-comment"></textarea></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <input type="checkbox" id="avis-anon" checked/>
+            <label for="avis-anon" style="font-size:12px;color:var(--muted)">Rester anonyme</label>
+          </div>
+          <button class="primary-btn" onclick="soumettreAvis()">Soumettre mon avis</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SURVEILLANCE CAMÉRAS ────────────────────────── -->
+    <div class="page" id="page-cameras">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <div>
+          <div style="font-size:20px;font-weight:800">Surveillance caméras</div>
+          <div style="font-size:13px;color:var(--muted)">Live · Enregistrement continu · Archives 30 jours</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span class="badge b-red" style="font-size:12px;padding:6px 12px">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px;animation:pulse-dot 1.5s infinite"></span>
+            4 caméras en direct
+          </span>
+        </div>
+      </div>
+
+      <style>@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}</style>
+
+      <!-- Grille des flux live -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+        <div class="card" style="overflow:hidden">
+          <div style="background:var(--navy);aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:rgba(255,255,255,.4)">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto 8px"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              <div style="font-size:12px">Flux RTSP disponible<br/>en déploiement réel</div>
+            </div>
+            <div style="position:absolute;top:8px;left:8px;background:var(--red);color:#fff;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:800">● LIVE</div>
+            <div style="position:absolute;bottom:8px;right:8px;display:flex;gap:6px">
+              <button onclick="showToast('Enregistrement démarré — Salle 01','success')" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer">Enreg.</button>
+              <button onclick="showToast('Plein écran')" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer">⛶</button>
+            </div>
+          </div>
+          <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700">Salle 01 — 6ème A</div><div style="font-size:11px;color:var(--muted)">Caméra HD 1080p</div></div>
+            <span class="badge b-green">Actif</span>
+          </div>
+        </div>
+        <div class="card" style="overflow:hidden">
+          <div style="background:var(--navy);aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:rgba(255,255,255,.4)">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto 8px"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              <div style="font-size:12px">Flux RTSP disponible<br/>en déploiement réel</div>
+            </div>
+            <div style="position:absolute;top:8px;left:8px;background:var(--red);color:#fff;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:800">● LIVE</div>
+            <div style="position:absolute;bottom:8px;right:8px;display:flex;gap:6px">
+              <button onclick="showToast('Enregistrement démarré — Salle 05','success')" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer">Enreg.</button>
+              <button onclick="showToast('Plein écran')" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer">⛶</button>
+            </div>
+          </div>
+          <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700">Salle 05 — 5ème B</div><div style="font-size:11px;color:var(--muted)">Caméra HD 1080p</div></div>
+            <span class="badge b-green">Actif</span>
+          </div>
+        </div>
+        <div class="card" style="overflow:hidden">
+          <div style="background:#0a0a0a;aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:rgba(255,255,255,.3)">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto 6px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <div style="font-size:11px">Hors ligne</div>
+            </div>
+            <div style="position:absolute;top:8px;left:8px;background:rgba(255,255,255,.2);color:#fff;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:800">● OFF</div>
+          </div>
+          <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700">Salle 12 — 4ème A</div><div style="font-size:11px;color:var(--muted)">Vérifier connexion</div></div>
+            <span class="badge b-red">Hors ligne</span>
+          </div>
+        </div>
+        <div class="card" style="overflow:hidden">
+          <div style="background:var(--navy);aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:rgba(255,255,255,.4)">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:block;margin:0 auto 8px"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              <div style="font-size:12px">Flux RTSP disponible<br/>en déploiement réel</div>
+            </div>
+            <div style="position:absolute;top:8px;left:8px;background:var(--red);color:#fff;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:800">● LIVE</div>
+          </div>
+          <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-size:13px;font-weight:700">Couloir principal</div><div style="font-size:11px;color:var(--muted)">Caméra grand angle</div></div>
+            <span class="badge b-green">Actif</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archives -->
+      <div class="card">
+        <div class="card-h"><div class="card-title">Archives (30 derniers jours)</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select class="form-input" style="width:auto;padding:5px 10px;font-size:12px"><option>Salle 01</option><option>Salle 05</option><option>Couloir</option></select>
+            <input type="date" class="form-input" style="width:auto;padding:5px 10px;font-size:12px"/>
+          </div>
+        </div>
+        <table class="tbl">
+          <tr><th>Date</th><th>Durée</th><th>Taille</th><th>Caméra</th><th>Action</th></tr>
+          <tr><td>19/03/2026 · 08h00</td><td>1h 00min</td><td>1.2 Go</td><td>Salle 01</td><td><button class="btn-secondary" style="font-size:11px;padding:4px 10px" onclick="showToast('Téléchargement archive…')">Télécharger</button></td></tr>
+          <tr><td>18/03/2026 · 14h00</td><td>55min</td><td>980 Mo</td><td>Salle 05</td><td><button class="btn-secondary" style="font-size:11px;padding:4px 10px" onclick="showToast('Téléchargement archive…')">Télécharger</button></td></tr>
+          <tr><td>18/03/2026 · 09h00</td><td>1h 00min</td><td>1.1 Go</td><td>Couloir</td><td><button class="btn-secondary" style="font-size:11px;padding:4px 10px" onclick="showToast('Téléchargement archive…')">Télécharger</button></td></tr>
+        </table>
+        <div style="padding:12px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)">
+          Les archives sont conservées <strong>30 jours</strong> puis supprimées automatiquement. Stockage utilisé : <strong>24.6 Go / 100 Go</strong>
+          <div class="pbar-bg" style="margin-top:6px;height:6px"><div class="pbar-fill" style="width:24.6%;background:var(--blue)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REPLAYS COURS ───────────────────────────────── -->
+    <div class="page" id="page-replays">
+      <div style="font-size:20px;font-weight:800;margin-bottom:4px">Replays des cours</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Enregistrements automatiques Jitsi · Téléchargeables par les élèves</div>
+
+      <div class="three-col" style="margin-bottom:16px">
+        <div class="card" style="padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--blue)">42</div><div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">Cours enregistrés</div></div>
+        <div class="card" style="padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--green)">318</div><div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">Téléchargements total</div></div>
+        <div class="card" style="padding:16px;text-align:center"><div style="font-size:28px;font-weight:800;color:var(--gold-d)">18.4 Go</div><div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:4px">Stockage utilisé</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-title">Bibliothèque des cours</div>
+          <div style="display:flex;gap:8px">
+            <select class="form-input" style="width:auto;padding:5px 10px;font-size:12px"><option>Toutes matières</option><option>Maths</option><option>Français</option></select>
+            <select class="form-input" style="width:auto;padding:5px 10px;font-size:12px"><option>Toutes classes</option><option>6ème A</option><option>5ème B</option></select>
+          </div>
+        </div>
+        <table class="tbl">
+          <tr><th>Cours</th><th>Classe</th><th>Date</th><th>Durée</th><th>Taille</th><th>Téléch.</th><th>Action</th></tr>
+          <tr>
+            <td><div class="tbl-name">Mathématiques — Fractions</div><div class="tbl-sub">M. Bouanga</div></td>
+            <td><span class="badge b-blue">6ème A</span></td>
+            <td style="font-size:12px">Auj. 08h30</td>
+            <td style="font-size:12px">52 min</td>
+            <td style="font-size:12px">480 Mo</td>
+            <td style="font-size:12px;color:var(--blue);font-weight:700">24×</td>
+            <td><button class="primary-btn" style="font-size:11px;padding:5px 12px" onclick="showToast('Téléchargement MP4 en cours…','success')">⬇ MP4</button></td>
+          </tr>
+          <tr>
+            <td><div class="tbl-name">Français — Conjugaison</div><div class="tbl-sub">Mme Nzoghe</div></td>
+            <td><span class="badge b-blue">5ème B</span></td>
+            <td style="font-size:12px">Hier 14h00</td>
+            <td style="font-size:12px">48 min</td>
+            <td style="font-size:12px">440 Mo</td>
+            <td style="font-size:12px;color:var(--blue);font-weight:700">18×</td>
+            <td><button class="primary-btn" style="font-size:11px;padding:5px 12px" onclick="showToast('Téléchargement MP4 en cours…','success')">⬇ MP4</button></td>
+          </tr>
+          <tr>
+            <td><div class="tbl-name">Sciences — Photosynthèse</div><div class="tbl-sub">M. Mba</div></td>
+            <td><span class="badge b-blue">4ème A</span></td>
+            <td style="font-size:12px">Hier 10h00</td>
+            <td style="font-size:12px">55 min</td>
+            <td style="font-size:12px">510 Mo</td>
+            <td style="font-size:12px;color:var(--blue);font-weight:700">22×</td>
+            <td><button class="primary-btn" style="font-size:11px;padding:5px 12px" onclick="showToast('Téléchargement MP4 en cours…','success')">⬇ MP4</button></td>
+          </tr>
+          <tr>
+            <td><div class="tbl-name">Anglais — Present perfect</div><div class="tbl-sub">Mme Obiang</div></td>
+            <td><span class="badge b-blue">3ème C</span></td>
+            <td style="font-size:12px">16/03/2026</td>
+            <td style="font-size:12px">50 min</td>
+            <td style="font-size:12px">465 Mo</td>
+            <td style="font-size:12px;color:var(--blue);font-weight:700">19×</td>
+            <td><button class="primary-btn" style="font-size:11px;padding:5px 12px" onclick="showToast('Téléchargement MP4 en cours…','success')">⬇ MP4</button></td>
+          </tr>
+        </table>
+        <div style="padding:12px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)">
+          Les enregistrements sont accessibles uniquement aux élèves présents au cours · Format MP4 optimisé pour mobile
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+
+  <!-- Mobile nav -->
+  <nav class="mnav" id="mnav">
+    <div style="display:flex;justify-content:space-around">
+      <button class="mni active" id="mn-dashboard" onclick="G('dashboard',null);MN('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="mnl">Accueil</span></button>
+      <button class="mni" id="mn-eleves" onclick="G('eleves',null);MN('eleves')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="mnl">Élèves</span></button>
+      <button class="mni" id="mn-replays" onclick="G('replays',null);MN('replays')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg><span class="mnl">Replays</span></button>
+      <button class="mni" id="mn-avis" onclick="G('avis',null);MN('avis')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="mnl">Avis</span></button>
+      <button class="mni" id="mn-profil" onclick="G('profil',null);MN('profil')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span class="mnl">Profil</span></button>
+    </div>
+  </nav>
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ══ MODALS ════════════════════════════════════════ -->
+<div class="mo" id="m-eleve"><div class="mb"><button class="mc" onclick="CM('m-eleve')">×</button><div class="mt">Inscrire un élève</div><div class="fr"><div class="fg"><label class="fl2">Nom</label><input class="fi" placeholder="Nom de famille"/></div><div class="fg"><label class="fl2">Prénom</label><input class="fi" placeholder="Prénom(s)"/></div></div><div class="fr"><div class="fg"><label class="fl2">Date de naissance</label><input class="fi" type="date"/></div><div class="fg"><label class="fl2">Classe</label><select class="fi"><option>6ème A</option><option>5ème B</option><option>4ème A</option></select></div></div><div class="fg"><label class="fl2">Téléphone parent</label><input class="fi" type="tel" placeholder="+241 07…"/></div><div class="fa"><button class="bsec" onclick="CM('m-eleve')">Annuler</button><button class="pb" onclick="CM('m-eleve');T('Élève inscrit — WhatsApp envoyé aux parents','s')" style="flex:1;justify-content:center">Inscrire</button></div></div></div>
+
+<div class="mo" id="m-avis"><div class="mb"><button class="mc" onclick="CM('m-avis')">×</button><div class="mt">Évaluer le cours</div><div style="text-align:center;margin-bottom:16px"><div style="font-size:13px;font-weight:700;margin-bottom:12px">Mathématiques — M. Bouanga · 6ème A</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px">Donnez votre note :</div><div class="stars" id="stars" style="justify-content:center"><span class="star lit" onclick="setStars(1)">★</span><span class="star lit" onclick="setStars(2)">★</span><span class="star lit" onclick="setStars(3)">★</span><span class="star lit" onclick="setStars(4)">★</span><span class="star" onclick="setStars(5)">★</span></div><div style="font-size:12px;color:var(--muted);margin-top:6px" id="star-label">Bien (4/5)</div></div><div class="fg"><label class="fl2">Votre commentaire (facultatif)</label><textarea class="fi" rows="3" placeholder="Ce cours était…" style="resize:vertical"></textarea></div><div class="fg"><label class="fl2">Points à améliorer</label><select class="fi"><option>Rien à signaler</option><option>Rythme trop rapide</option><option>Besoin de plus d'exercices</option><option>Problème technique vidéo</option></select></div><div class="fa"><button class="bsec" onclick="CM('m-avis')">Annuler</button><button class="pb" onclick="CM('m-avis');T('Avis envoyé — Merci !','s')" style="flex:1;justify-content:center">Envoyer mon avis</button></div></div></div>
+
+<div class="mo" id="m-cam"><div class="mb" style="max-width:600px"><button class="mc" onclick="CM('m-cam')">×</button><div class="mt" id="cam-title">Salle 01 — 6ème A</div><div class="video-player"><div class="vp-header"><div class="vp-title" id="cam-sub">Vision en direct</div><button class="vp-dl" onclick="T('Enregistrement en cours…','s')">⏺ Enregistrer</button></div><div class="vp-screen" style="height:200px;background:#050A14"><div class="cam-live" style="position:absolute;top:12px;left:12px">LIVE</div><div style="text-align:center"><div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;margin:0 auto"><svg width="28" height="28" viewBox="0 0 24 24" fill="rgba(255,255,255,.3)"><path d="M23 7 16 12 23 17V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><div style="color:rgba(255,255,255,.3);font-size:11px;margin-top:8px">Flux en direct — Salle ICG</div></div></div><div class="vp-bar"><div style="font-size:10px;color:rgba(255,255,255,.5)">LIVE</div><div class="vp-prog"><div style="width:100%;height:4px;background:var(--red);border-radius:99px;animation:pulse-red 1s infinite"></div></div><div class="vp-time" id="cam-time">00:00:00</div></div></div><div style="display:flex;gap:8px;margin-top:12px"><button class="pb" style="flex:1;justify-content:center;font-size:12px" onclick="T('Capture d\'écran sauvegardée','s')">📸 Capture</button><button class="bsec" style="flex:1;font-size:12px" onclick="T('Téléchargement archive démarré','s')">⬇ Archive</button><button class="bsec" style="flex:1;font-size:12px" onclick="CM('m-cam')">Fermer</button></div></div></div>
+
+<style>@keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.4}}</style>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ SERVICE WORKER ══════════════════════════════════
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js')
+    .then(()=>{if(document.getElementById('sw-s')){document.getElementById('sw-s').textContent='Actif';}})
+    .catch(()=>{if(document.getElementById('sw-s')){document.getElementById('sw-s').textContent='Inactif';}});
+}
+
+// ══ ONLINE/OFFLINE ═══════════════════════════════════
+function upOnline(){
+  const on=navigator.onLine;
+  document.getElementById('offline-bar').classList.toggle('show',!on);
+  const el=document.getElementById('os');
+  el.className='oi '+(on?'on':'off');
+  el.innerHTML=`<div class="sd"></div><span>${on?'En ligne':'Hors ligne'}</span>`;
+}
+window.addEventListener('online',()=>{upOnline();T('Connexion rétablie','s');});
+window.addEventListener('offline',()=>{upOnline();T('Hors connexion — mode cache','e');});
+upOnline();
+
+// ══ NAVIGATION ═══════════════════════════════════════
+const PT={dashboard:'Tableau de bord',eleves:'Élèves',notes:'Notes & Bulletins',agenda:'Agenda',cours:'Cours vidéo',replays:'Replays & Archives',avis:'Avis élèves',cameras:'Surveillance caméras',absences:'Absences',impression:'Impression bulletins',scolarite:'Scolarité & Paiements',enseignants:'Enseignants',parents:'Parents & Contacts',profil:'Profil & Installation'};
+
+function G(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('p-'+id);
+  if(pg)pg.classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('ptitle').textContent=PT[id]||id;
+  document.title='ICG — '+(PT[id]||id);
+  window.location.hash=id;
+  closeSB();
+}
+function routeHash(){const h=window.location.hash.slice(1);if(h&&PT[h]){const el=document.querySelector(`.ni[onclick*="'${h}'"]`);G(h,el);}}
+window.addEventListener('hashchange',routeHash);
+
+// ══ SIDEBAR ══════════════════════════════════════════
+function toggleSB(){const sb=document.getElementById('sb'),ov=document.getElementById('sb-ov');sb.classList.toggle('open');ov.style.display=sb.classList.contains('open')?'block':'none';}
+function closeSB(){document.getElementById('sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';}
+function MN(id){document.querySelectorAll('.mni').forEach(i=>i.classList.remove('active'));const el=document.getElementById('mn-'+id);if(el)el.classList.add('active');}
+
+// ══ MODALS ════════════════════════════════════════════
+function OM(id){document.getElementById(id).classList.add('open');}
+function CM(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+
+// ══ TOAST ═════════════════════════════════════════════
+let _tt;
+function T(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+(type==='s'?'s':type==='e'?'e':'');
+  clearTimeout(_tt);_tt=setTimeout(()=>{t.className='toast';},3200);
+}
+
+// ══ HORLOGE ══════════════════════════════════════════
+function clk(){const n=new Date();document.getElementById('clk').textContent=n.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});document.getElementById('cld').textContent=n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+setInterval(clk,1000);clk();
+
+// ══ STARS ════════════════════════════════════════════
+const SL=['','Très mauvais','Mauvais','Moyen','Bien','Excellent !'];
+function setStars(n){
+  document.querySelectorAll('.star').forEach((s,i)=>{s.classList.toggle('lit',i<n);});
+  document.getElementById('star-label').textContent=SL[n]+' ('+n+'/5)';
+}
+
+// ══ CAMÉRA ═══════════════════════════════════════════
+let camInterval;
+function openCam(name){
+  document.getElementById('cam-title').textContent=name;
+  document.getElementById('cam-sub').textContent='Vision en direct · '+name;
+  OM('m-cam');
+  let s=0;
+  clearInterval(camInterval);
+  camInterval=setInterval(()=>{
+    s++;const h=String(Math.floor(s/3600)).padStart(2,'0');
+    const m=String(Math.floor((s%3600)/60)).padStart(2,'0');
+    const sec=String(s%60).padStart(2,'0');
+    const el=document.getElementById('cam-time');
+    if(el)el.textContent=h+':'+m+':'+sec;
+  },1000);
+}
+
+// ══ IMPRESSION ═══════════════════════════════════════
+async function printSim(){
+  const w=document.getElementById('pbar-w'),f=document.getElementById('pbar-f'),tt=document.getElementById('pbar-t');
+  w.style.display='block';
+  const steps=[[15,'Récupération données…'],[35,'Calcul moyennes…'],[60,'Génération PDFs…'],[80,'Fusion fichier…'],[100,'✓ Prêt !']];
+  for(const[p,m] of steps){await new Promise(r=>setTimeout(r,700));f.style.width=p+'%';tt.textContent=m;if(p===100)f.style.background='var(--green)';}
+  setTimeout(()=>{w.style.display='none';f.style.width='0%';f.style.background='var(--blue)';T('108 bulletins générés et prêts au téléchargement','s');},700);
+}
+
+// ══ PWA INSTALL ═══════════════════════════════════════
+let dP;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();dP=e;
+  const b=document.getElementById('ibtn');
+  if(b){b.textContent='⬇ Installer maintenant sur cet appareil';b.style.background='linear-gradient(135deg,#27AE60,#1A7A40)';}
+});
+function installPWA(){
+  if(dP){dP.prompt();dP.userChoice.then(r=>{if(r.outcome==='accepted'){T('Application ICG installée !','s');const b=document.getElementById('ibtn');if(b){b.textContent='✓ Application installée';b.classList.add('installed');}}dP=null;});}
+  else{T('Sur iOS : Partager → "Sur l\'écran d\'accueil" | Déjà installé sur cet appareil');}
+}
+function installOn(plat){
+  const msgs={Android:'Chrome → ⋮ → "Ajouter à l\'écran d\'accueil" → Installer',iPhone:'Safari → Partager → "Sur l\'écran d\'accueil"',Windows:'Chrome/Edge → icône ⊕ dans la barre d\'adresse → Installer',Mac:'Chrome → icône ⊕ dans la barre → Installer | Safari : Fichier → Ajouter au Dock',Tablette:'Chrome → ⋮ → "Installer l\'appli"',Lien:'Lien copié : https://icg-gabon.ga/app'};
+  T(msgs[plat]||plat);
+}
+function copyLink(){navigator.clipboard?.writeText('https://icg-gabon.ga/app').then(()=>T('Lien copié : https://icg-gabon.ga/app','s')).catch(()=>T('Lien : https://icg-gabon.ga/app'));}
+function doSearch(v){if(v.length>2)T('Recherche : "'+v+'"…');}
+function showNotif(){T('Aucune nouvelle notification');}
+window.addEventListener('appinstalled',()=>T('ICG installée sur votre appareil','s'));
+
+// ══ INIT ═════════════════════════════════════════════
+routeHash();
+</script>
+</body>
+</html>
